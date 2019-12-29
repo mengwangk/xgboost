@@ -33,7 +33,7 @@ class TestUpdaters(unittest.TestCase):
                           'max_bin': [2, 256],
                           'grow_policy': ['depthwise', 'lossguide'],
                           'max_leaves': [64, 0],
-                          'silent': [1]}
+                          'verbosity': [0]}
         for param in parameter_combinations(variable_param):
             result = run_suite(param)
             assert_results_non_increasing(result, 1e-2)
@@ -45,7 +45,7 @@ class TestUpdaters(unittest.TestCase):
         ag_param = {'max_depth': 2,
                     'tree_method': 'hist',
                     'eta': 1,
-                    'silent': 1,
+                    'verbosity': 0,
                     'objective': 'binary:logistic',
                     'eval_metric': 'auc'}
         hist_res = {}
@@ -69,8 +69,8 @@ class TestUpdaters(unittest.TestCase):
         nan = np.nan
         param = {'missing': nan, 'tree_method': 'hist'}
         model = xgb.XGBRegressor(**param)
-        X = [[6.18827160e+05, 1.73000000e+02], [6.37345679e+05, nan],
-             [6.38888889e+05, nan], [6.28086420e+05, nan]]
+        X = np.array([[6.18827160e+05, 1.73000000e+02], [6.37345679e+05, nan],
+                      [6.38888889e+05, nan], [6.28086420e+05, nan]])
         y = [1000000., 0., 0., 500000.]
         w = [0, 0, 1, 0]
         model.fit(X, y, sample_weight=w)

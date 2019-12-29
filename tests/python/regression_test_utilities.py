@@ -1,5 +1,3 @@
-from __future__ import print_function
-
 import glob
 import itertools as it
 import numpy as np
@@ -67,7 +65,8 @@ def get_weights_regression(min_weight, max_weight):
     n = 10000
     sparsity = 0.25
     X, y = datasets.make_regression(n, random_state=rng)
-    X = np.array([[np.nan if rng.uniform(0, 1) < sparsity else x for x in x_row] for x_row in X])
+    X = np.array([[np.nan if rng.uniform(0, 1) < sparsity else x
+                   for x in x_row] for x_row in X])
     w = np.array([rng.uniform(min_weight, max_weight) for i in range(n)])
     return X, y, w
 
@@ -132,15 +131,16 @@ def run_suite(param, num_rounds=10, select_datasets=None, scale_features=False):
     Run the given parameters on a range of datasets. Objective and eval metric will be automatically set
     """
     datasets = [
-        Dataset("Boston", get_boston, "reg:linear", "rmse"),
+        Dataset("Boston", get_boston, "reg:squarederror", "rmse"),
         Dataset("Digits", get_digits, "multi:softmax", "merror"),
         Dataset("Cancer", get_cancer, "binary:logistic", "error"),
-        Dataset("Sparse regression", get_sparse, "reg:linear", "rmse"),
+        Dataset("Sparse regression", get_sparse, "reg:squarederror", "rmse"),
         Dataset("Sparse regression with weights", get_sparse_weights,
-                "reg:linear", "rmse", has_weights=True),
+                "reg:squarederror", "rmse", has_weights=True),
         Dataset("Small weights regression", get_small_weights,
-                "reg:linear", "rmse", has_weights=True),
-        Dataset("Boston External Memory", get_boston, "reg:linear", "rmse",
+                "reg:squarederror", "rmse", has_weights=True),
+        Dataset("Boston External Memory", get_boston,
+                "reg:squarederror", "rmse",
                 use_external_memory=True)
     ]
 

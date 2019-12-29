@@ -5,6 +5,7 @@ import io
 import sys
 import os
 from setuptools import setup, find_packages
+
 # import subprocess
 sys.path.insert(0, '.')
 
@@ -27,6 +28,7 @@ for libfile in libpath['find_lib_path']():
         continue
 
 print("Install libxgboost from: %s" % LIB_PATH)
+
 # Please use setup_pip.py for generating and deploying pip installation
 # detailed instruction in setup_pip.py
 setup(name='xgboost',
@@ -37,6 +39,13 @@ setup(name='xgboost',
           'numpy',
           'scipy',
       ],
+      extras_require={
+          'pandas': ['pandas'],
+          'sklearn': ['sklearn'],
+          'dask': ['dask', 'pandas', 'distributed'],
+          'datatable': ['datatable'],
+          'plotting': ['graphviz', 'matplotlib']
+      },
       maintainer='Hyunsu Cho',
       maintainer_email='chohyu01@cs.washington.edu',
       zip_safe=False,
@@ -46,5 +55,13 @@ setup(name='xgboost',
       include_package_data=True,
       data_files=[('xgboost', LIB_PATH)],
       license='Apache-2.0',
-      classifiers=['License :: OSI Approved :: Apache Software License'],
+      classifiers=['License :: OSI Approved :: Apache Software License',
+                   'Development Status :: 5 - Production/Stable',
+                   'Operating System :: OS Independent',
+                   'Programming Language :: Python',
+                   'Programming Language :: Python :: 3',
+                   'Programming Language :: Python :: 3.5',
+                   'Programming Language :: Python :: 3.6',
+                   'Programming Language :: Python :: 3.7'],
+      python_requires='>=3.5',
       url='https://github.com/dmlc/xgboost')

@@ -1,8 +1,8 @@
 /*!
- * Copyright 2018 by Contributors
+ * Copyright 2018-2019 by Contributors
  */
 #include "../helpers.h"
-#include "../../../src/common/host_device_vector.h"
+#include <xgboost/host_device_vector.h>
 #include <xgboost/tree_updater.h>
 #include <gtest/gtest.h>
 #include <vector>
@@ -13,14 +13,14 @@ namespace xgboost {
 namespace tree {
 
 TEST(Updater, Prune) {
-  int constexpr n_rows = 32, n_cols = 16;
+  int constexpr kNCols = 16;
 
   std::vector<std::pair<std::string, std::string>> cfg;
-  cfg.push_back(std::pair<std::string, std::string>(
-      "num_feature", std::to_string(n_cols)));
-  cfg.push_back(std::pair<std::string, std::string>(
+  cfg.emplace_back(std::pair<std::string, std::string>(
+      "num_feature", std::to_string(kNCols)));
+  cfg.emplace_back(std::pair<std::string, std::string>(
       "min_split_loss", "10"));
-  cfg.push_back(std::pair<std::string, std::string>(
+  cfg.emplace_back(std::pair<std::string, std::string>(
       "silent", "1"));
 
   // These data are just place holders.
@@ -29,13 +29,15 @@ TEST(Updater, Prune) {
         {0.25f, 0.24f}, {0.25f, 0.24f}, {0.25f, 0.24f}, {0.25f, 0.24f} };
   auto dmat = CreateDMatrix(32, 16, 0.4, 3);
 
+  auto lparam = CreateEmptyGenericParam(GPUIDX);
+
   // prepare tree
   RegTree tree = RegTree();
-  tree.param.InitAllowUnknown(cfg);
+  tree.param.UpdateAllowUnknown(cfg);
   std::vector<RegTree*> trees {&tree};
   // prepare pruner
-  std::unique_ptr<TreeUpdater> pruner(TreeUpdater::Create("prune"));
-  pruner->Init(cfg);
+  std::unique_ptr<TreeUpdater> pruner(TreeUpdater::Create("prune", &lparam));
+  pruner->Configure(cfg);
 
   // loss_chg < min_split_loss;
   tree.ExpandNode(0, 0, 0, true, 0.0f, 0.3f, 0.4f, 0.0f, 0.0f);
